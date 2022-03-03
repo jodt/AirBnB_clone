@@ -53,6 +53,15 @@ class TestConsole(unittest.TestCase):
 
     # test create method
 
+    @patch('models.base_model.uuid.uuid4')
+    def test_create_user(self, mock_uuid):
+        mock_uuid.return_value = "9d53e28a-ee90-4453-9dd1-4ca8468916be"
+        expected = "9d53e28a-ee90-4453-9dd1-4ca8468916be\n"
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+        output = f.getvalue()
+        self.assertEqual(output, expected)
+
     def test_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create")
