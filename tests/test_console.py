@@ -6,6 +6,7 @@ Execute all tests: python3 -m unittest discover tests
 Execute this test: python3 -m unittest tests/test_console.py
 """
 
+from datetime import datetime
 import io
 import unittest
 from console import HBNBCommand
@@ -20,6 +21,8 @@ from models.review import Review
 from models.engine.file_storage import FileStorage
 from unittest.mock import patch, Mock
 from contextlib import redirect_stdout
+from models import storage
+
 
 
 class_dict = {
@@ -46,7 +49,6 @@ class TestConsole(unittest.TestCase):
         pass
 
     # test prompt
-
     def test_prompt(self):
         """This function test the prompt format"""
         self.assertEqual(self.console.prompt, "(hbnb) ")
@@ -54,8 +56,10 @@ class TestConsole(unittest.TestCase):
     # test create method
 
     @patch('models.base_model.uuid.uuid4')
-    def test_create_user(self, mock_uuid):
+    @patch('models.base_model.datetime')
+    def test_create_user(self, mock_datetime, mock_uuid):
         mock_uuid.return_value = "9d53e28a-ee90-4453-9dd1-4ca8468916be"
+        mock_datetime.now.return_value = datetime(2022, 3, 4, 10, 2, 26, 672468)
         expected = "9d53e28a-ee90-4453-9dd1-4ca8468916be\n"
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create User")
@@ -76,6 +80,13 @@ class TestConsole(unittest.TestCase):
         output = f.getvalue()
         self.assertEqual(output, "** class name missing **\n")
 
+    def test_show(self):
+        expected ="[User] (9d53e28a-ee90-4453-9dd1-4ca8468916be) {'id': '9d53e28a-ee90-4453-9dd1-4ca8468916be', 'created_at': datetime.datetime(2022, 3, 4, 10, 2, 26, 672468), 'updated_at': datetime.datetime(2022, 3, 4, 10, 2, 26, 672468)}\n"
+        with patch('sys.stdout', new=io.StringIO()) as f:
+             HBNBCommand().onecmd("show User 9d53e28a-ee90-4453-9dd1-4ca8468916be")
+        output = f.getvalue()
+        self.assertEqual(output, expected)
+
     def test_show_with_false_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("show Model")
@@ -94,33 +105,7 @@ class TestConsole(unittest.TestCase):
         output = f.getvalue()
         self.assertEqual(output, "** no instance found **\n")
 
-    # test destroy method
-
-    def test_destroy(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy")
-        output = f.getvalue()
-        self.assertEqual(output, "** class name missing **\n")
-
-    def test_destroy_with_false_class(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy Model")
-        output = f.getvalue()
-        self.assertEqual(output, "** class doesn't exist **\n")
-
-    def test_destroy_without_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy User")
-        output = f.getvalue()
-        self.assertEqual(output, "** instance id missing **\n")
-
-    def test_destroy_with_incorrect_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy User 1212")
-        output = f.getvalue()
-        self.assertEqual(output, "** no instance found **\n")
-
-    # test destroy method
+    # test all method
 
     def test_all_with_false_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -153,6 +138,7 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("update User 1212")
         output = f.getvalue()
         self.assertEqual(output, "** no instance found **\n")
+
 
     # test help command
 
@@ -199,3 +185,38 @@ the number of instances of a class\n")
         output = f.getvalue()
         self.assertEqual(output, "Update command to update an \
 instance based on the class name and id by adding or updating attribute\n")
+
+
+ # test destroy method
+
+    def test_destroy(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("destroy")
+        output = f.getvalue()
+        self.assertEqual(output, "** class name missing **\n")
+
+    def test_destroy_with_false_class(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("destroy Model")
+        output = f.getvalue()
+        self.assertEqual(output, "** class doesn't exist **\n")
+
+    def test_destroy_without_id(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("destroy User")
+        output = f.getvalue()
+        self.assertEqual(output, "** instance id missing **\n")
+
+    def test_destroy_with_incorrect_id(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("destroy User 1212")
+        output = f.getvalue()
+        self.assertEqual(output, "** no instance found **\n")
+
+    def test_destroy_user_instance(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+        key = "User"+"."+f.getvalue().strip('\n')
+        self.assertIn(key, storage._FileStorage__objects)
+        HBNBCommand().onecmd("destroy User {}".format(f.getvalue()))
+        self.assertNotIn(key, storage._FileStorage__objects)
