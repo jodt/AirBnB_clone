@@ -152,7 +152,8 @@ and id by adding or updating attribute"""
                 storage._FileStorage__objects[f"{list_args[0]}.{list_args[1]}"
                                               ], list_args[2], tryeval(
                                                   (list_args[3])))
-            storage.save()
+            instance = storage._FileStorage__objects[f"{list_args[0]}.{list_args[1]}"]
+            instance.save()
 
     def default(self, arg):
         pattern_reg = r"(.*)\.(.*)\((.*?)\)$"
