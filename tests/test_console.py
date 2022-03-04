@@ -6,6 +6,7 @@ Execute all tests: python3 -m unittest discover tests
 Execute this test: python3 -m unittest tests/test_console.py
 """
 
+from asyncio.constants import LOG_THRESHOLD_FOR_CONNLOST_WRITES
 from datetime import datetime
 import io
 import unittest
@@ -22,7 +23,9 @@ from models.engine.file_storage import FileStorage
 from unittest.mock import patch, Mock
 from contextlib import redirect_stdout
 from models import storage
-
+import shutil
+import os
+from time import sleep
 
 
 class_dict = {
@@ -42,50 +45,349 @@ class TestConsole(unittest.TestCase):
     """
 
     def setUp(self):
-        self.console = HBNBCommand()
-        pass
+        try:
+            shutil.copyfile("file.json", "tmp_file.json")
+            os.remove("file.json")
+            open("file.json", "w").close()
+            storage._FileStorage__objects = {}
+        except Exception:
+            pass
 
     def tearDown(self):
-        pass
+        try:
+            shutil.copyfile("tmp_file.json", "file.json")
+            os.remove("tmp_file.json")
+            storage._FileStorage__objects = {}
+        except Exception:
+            pass
 
     # test prompt
     def test_prompt(self):
+        console = HBNBCommand()
         """This function test the prompt format"""
-        self.assertEqual(self.console.prompt, "(hbnb) ")
+        self.assertEqual(console.prompt, "(hbnb) ")
 
-    # test create method
+    # test create and .create methods
 
-    @patch('models.base_model.uuid.uuid4')
-    @patch('models.base_model.datetime')
-    def test_create_user(self, mock_datetime, mock_uuid):
-        mock_uuid.return_value = "9d53e28a-ee90-4453-9dd1-4ca8468916be"
-        mock_datetime.now.return_value = datetime(2022, 3, 4, 10, 2, 26, 672468)
-        expected = "9d53e28a-ee90-4453-9dd1-4ca8468916be\n"
+    def test_create_basemodel(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_basemodel_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel etctectetc")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_basemodel_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("BaseModel.create()")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_user(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create User")
-        output = f.getvalue()
-        self.assertEqual(output, expected)
+            id = f.getvalue().strip()
+            className = "User." + id
+            self.assertIn(className, storage.all().keys())
 
-    def test_create(self):
+    def test_create_user_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User etctectec")
+            id = f.getvalue().strip()
+            className = "User." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_user_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("User.create()")
+            id = f.getvalue().strip()
+            className = "User." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_state(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            id = f.getvalue().strip()
+            className = "State." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_state_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create State etcetetc")
+            id = f.getvalue().strip()
+            className = "State." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_state_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("State.create()")
+            id = f.getvalue().strip()
+            className = "State." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_city(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            id = f.getvalue().strip()
+            className = "City." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_city_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create City etcetcetc")
+            id = f.getvalue().strip()
+            className = "City." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_city_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("City.create()")
+            id = f.getvalue().strip()
+            className = "City." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_amenity(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_amenity_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity etcetcetc")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_amenity_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Amenity.create()")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_place(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_place_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Place etcetcetc")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_place_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Place.create()")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_review(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_review_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Review etcetcetcetc")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_review_create(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Review.create()")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_create_without_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create")
         output = f.getvalue()
         self.assertEqual(output, "** class name missing **\n")
 
+    def test_create_with_false_class(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Model")
+        output = f.getvalue()
+        self.assertEqual(output, "** class doesn't exist **\n")
     # test show method
+
+    def test_show_basemodel(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show BaseModel {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_basemodel_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show BaseModel {} etctectec".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_user(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+            className = "User." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show User {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_user_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+            className = "User." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show User {} etcetcetc".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_state(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            id = f.getvalue().strip()
+            className = "State." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show State {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_state_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            id = f.getvalue().strip()
+            className = "State." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show State {} etcetcetc".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_city(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            id = f.getvalue().strip()
+            className = "City." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show City {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_city_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            id = f.getvalue().strip()
+            className = "City." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show City {} etcetcetc".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_amenity(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Amenity {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_amenity_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Amenity {} etcetcetc".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_place(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Place {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_place_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Place {} etcetcetc".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_review(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Review {}".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
+
+    def test_show_review_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            expected = storage._FileStorage__objects[className].__str__()
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("show Review {} etetete".format(id))
+            output = g.getvalue().strip()
+            self.assertEqual(output, expected)
 
     def test_show(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("show")
         output = f.getvalue()
         self.assertEqual(output, "** class name missing **\n")
-
-    def test_show(self):
-        expected ="[User] (9d53e28a-ee90-4453-9dd1-4ca8468916be) {'id': '9d53e28a-ee90-4453-9dd1-4ca8468916be', 'created_at': datetime.datetime(2022, 3, 4, 10, 2, 26, 672468), 'updated_at': datetime.datetime(2022, 3, 4, 10, 2, 26, 672468)}\n"
-        with patch('sys.stdout', new=io.StringIO()) as f:
-             HBNBCommand().onecmd("show User 9d53e28a-ee90-4453-9dd1-4ca8468916be")
-        output = f.getvalue()
-        self.assertEqual(output, expected)
 
     def test_show_with_false_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -107,11 +409,61 @@ class TestConsole(unittest.TestCase):
 
     # test all method
 
+    def test_all(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            HBNBCommand().onecmd("create City")
+            HBNBCommand().onecmd("create State")
+        list_result = []
+        for k, v in storage._FileStorage__objects.items():
+            list_result.append(v.__str__())
+        expected = (str(list_result) + "\n")
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("all")
+        output = f.getvalue()
+        self.assertEqual(output, expected)
+
+        with patch('sys.stdout', new=io.StringIO()) as g:
+            HBNBCommand().onecmd("all User")
+        output_user = g.getvalue()
+        list_result = []
+        for k, v in storage._FileStorage__objects.items():
+            if isinstance(storage._FileStorage__objects[k], User):
+                list_result.append(v.__str__())
+        expected = (str(list_result)+"\n")
+        self.assertEqual(output_user, expected)
+
+        with patch('sys.stdout', new=io.StringIO()) as h:
+            HBNBCommand().onecmd("all User blablabla")
+        output_user = h.getvalue()
+        list_result = []
+        for k, v in storage._FileStorage__objects.items():
+            if isinstance(storage._FileStorage__objects[k], User):
+                list_result.append(v.__str__())
+        expected = (str(list_result)+"\n")
+        self.assertEqual(output_user, expected)
+
+        with patch('sys.stdout', new=io.StringIO()) as i:
+            HBNBCommand().onecmd("          all      User")
+        output_user = h.getvalue()
+        list_result = []
+        for k, v in storage._FileStorage__objects.items():
+            if isinstance(storage._FileStorage__objects[k], User):
+                list_result.append(v.__str__())
+        expected = (str(list_result)+"\n")
+        self.assertEqual(output_user, expected)
+
     def test_all_with_false_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("all Model")
         output = f.getvalue()
         self.assertEqual(output, "** class doesn't exist **\n")
+
+    def test_user_all(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("user.all")
+        output = f.getvalue()
+        self.assertEqual(output, "*** Unknow syntax: user.all\n")
 
     # test update method
 
@@ -138,7 +490,6 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("update User 1212")
         output = f.getvalue()
         self.assertEqual(output, "** no instance found **\n")
-
 
     # test help command
 
@@ -185,7 +536,6 @@ the number of instances of a class\n")
         output = f.getvalue()
         self.assertEqual(output, "Update command to update an \
 instance based on the class name and id by adding or updating attribute\n")
-
 
  # test destroy method
 
