@@ -30,32 +30,41 @@ class TestPlace(unittest.TestCase):
         test_update_my_object_Place
         test_create_from_dict_Place
     """
-    path = "models/place.py" # models/place.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/place.py"  # models/place.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(place.__doc__, "Missing: module documentation of file \"place.py\"")
+        self.assertIsNotNone(
+            place.__doc__,
+            "Missing: module documentation of file \"place.py\"")
 
         # classes documentation
         for key, value in place.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__,
+                    f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in place.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -90,7 +99,8 @@ class TestPlace(unittest.TestCase):
         my_place.price_by_night = 4
         my_place.latitude = 5.5
         my_place.longitude = 6.6
-        my_place.amenity_ids = ["Place_amenity_ids_example1", "Place_amenity_ids_example2"]
+        my_place.amenity_ids = [
+            "Place_amenity_ids_example1", "Place_amenity_ids_example2"]
 
         self.assertEqual(my_place.city_id, "Place_place_id_example")
         self.assertIsInstance(my_place.city_id, str)
@@ -112,7 +122,8 @@ class TestPlace(unittest.TestCase):
         self.assertIsInstance(my_place.latitude, float)
         self.assertEqual(my_place.longitude, 6.6)
         self.assertIsInstance(my_place.longitude, float)
-        self.assertEqual(my_place.amenity_ids, ["Place_amenity_ids_example1", "Place_amenity_ids_example2"])
+        self.assertEqual(my_place.amenity_ids, ["Place_amenity_ids_\
+example1", "Place_amenity_ids_example2"])
         self.assertIsInstance(my_place.amenity_ids, list)
         self.assertLessEqual(my_place.created_at, my_place.updated_at)
 
@@ -132,8 +143,8 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(hasattr(my_place, "amenity_ids"))
 
     def test_create_instance_from_dict_Place(self):
-        """create a new instance Place using a dictionnary of another instance \
-already created"""
+        """create a new instance Place using a dictionnary \
+of another instance already created"""
         my_place = Place()
         my_place.city_id = "Place_place_id_example"
         my_place.name = "Place_name_example"
@@ -179,12 +190,13 @@ updated_at has changed"""
             "latitude": 5.5,
             "longitude": 6.6,
             "amenity_ids": [
-            "Place_amenity_ids_example1",
-            "Place_amenity_ids_example2"
+                "Place_amenity_ids_example1",
+                "Place_amenity_ids_example2"
             ],
             "__class__": "Place"
         })
         self.assertEqual(my_place.id, "9558dab8-d155-4731-b8bf-43ae1c60d7c4")
         self.assertEqual(my_place.name, "Place_name_example")
-        self.assertEqual(my_place.created_at, datetime(2022, 3, 2, 8, 58, 33, 467526))
+        self.assertEqual(my_place.created_at, datetime(
+            2022, 3, 2, 8, 58, 33, 467526))
         self.assertNotEqual(my_place.__class__, "Place")

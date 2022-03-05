@@ -30,32 +30,39 @@ class TestUser(unittest.TestCase):
         test_update_my_object_User
         test_create_from_dict_User
     """
-    path = "models/user.py" # models/user.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/user.py"  # models/user.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(user.__doc__, "Missing: module documentation of file \"user.py\"")
+        self.assertIsNotNone(
+            user.__doc__, "Missing: module documentation of file \"user.py\"")
 
         # classes documentation
         for key, value in user.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in user.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -152,5 +159,6 @@ updated_at has changed"""
         })
         self.assertEqual(my_user.id, "4d8f60bd-ef9e-4186-9b7d-ef3bff6d6b7f")
         self.assertEqual(my_user.first_name, "John")
-        self.assertEqual(my_user.created_at, datetime(2022, 3, 2, 8, 30, 54, 356780))
+        self.assertEqual(my_user.created_at, datetime(
+            2022, 3, 2, 8, 30, 54, 356780))
         self.assertNotEqual(my_user.__class__, "User")

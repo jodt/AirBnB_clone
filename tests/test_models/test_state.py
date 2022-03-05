@@ -30,32 +30,40 @@ class TestState(unittest.TestCase):
         test_update_my_object_State
         test_create_from_dict_State
     """
-    path = "models/state.py" # models/state.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/state.py"  # models/state.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(state.__doc__, "Missing: module documentation of file \"state.py\"")
+        self.assertIsNotNone(
+            state.__doc__,
+            "Missing: module documentation of file \"state.py\"")
 
         # classes documentation
         for key, value in state.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in state.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -92,8 +100,8 @@ class TestState(unittest.TestCase):
         self.assertTrue(hasattr(my_state, "name"))
 
     def test_create_instance_from_dict_State(self):
-        """create a new instance State using a dictionnary of another instance \
-already created"""
+        """create a new instance State using a dictionnary \
+of another instance already created"""
         my_state = State()
         my_state.name = "State_name_example"
         my_model_json = my_state.to_dict()
@@ -131,5 +139,6 @@ updated_at has changed"""
         })
         self.assertEqual(my_state.id, "0e2f9562-c0bf-4469-baeb-05cd5e653e56")
         self.assertEqual(my_state.name, "elpmaxe")
-        self.assertEqual(my_state.created_at, datetime(2022, 3, 2, 12, 32, 23, 83225))
+        self.assertEqual(my_state.created_at, datetime(
+            2022, 3, 2, 12, 32, 23, 83225))
         self.assertNotEqual(my_state.__class__, "State")

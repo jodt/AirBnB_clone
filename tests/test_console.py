@@ -40,32 +40,40 @@ class TestConsole(unittest.TestCase):
     """
     class that test console
     """
-    path = "console.py" # models/state.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "console.py"  # models/state.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file test_console.py"
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file test_console.py"
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(console.__doc__, "Missing: module documentation of file \"console.py\"")
+        self.assertIsNotNone(
+            console.__doc__,
+            "Missing: module documentation of file \"console.py\"")
 
         # classes documentation
         for key, value in console.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in console.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -707,7 +715,7 @@ attribute_name string_value'
         output = f.getvalue()
         self.assertTrue(output)
 
- # test destroy method
+    # test destroy method
 
     def test_destroy(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
