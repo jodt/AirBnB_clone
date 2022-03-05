@@ -2,7 +2,6 @@
 """
 This module represents the console
 """
-import json
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -10,8 +9,8 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.engine.file_storage import FileStorage
 from models import storage
+import json
 import shlex
 import cmd
 import re
@@ -69,7 +68,9 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, arg):
         """Show command to print the string representation of an instance \
-based on the class name and id"""
+based on the class name and id
+Usage: <class name>.show(<id>)
+Usage: show <class name> <id>"""
         list_args = parse(arg)
         if len(list_args) == 0:
             print("** class name missing **")
@@ -87,7 +88,9 @@ based on the class name and id"""
 
     def do_destroy(self, arg):
         """Destroy command to delete an instance \
-based on the class name and id"""
+based on the class name and id
+Usage: <class name>.destroy(<id>)
+Usage: destroy <class name> <id>"""
         list_args = parse(arg)
         if len(list_args) == 0:
             print("** class name missing **")
@@ -103,7 +106,10 @@ based on the class name and id"""
             storage.save()
 
     def do_all(self, arg):
-        """All command to print all string representation of all instances"""
+        """All command to print all string representation of all instances
+Usage: <class name>.all()
+Usage: all <class name>
+where <class name> is optional"""
         list_args = parse(arg)
         if len(list_args) > 0 and list_args[0] not in class_dict:
             print("** class doesn't exist **")
@@ -118,7 +124,10 @@ based on the class name and id"""
             print(list_result)
 
     def do_count(self, arg):
-        """Count command to retrieve the number of instances of a class"""
+        """Count command to retrieve the number of instances of a class
+Usage: <class name>.count()
+Usage: count <class name>
+where <class name> is optional"""
         count = 0
         if arg:
             list_args = parse(arg)
@@ -132,7 +141,11 @@ based on the class name and id"""
 
     def do_update(self, arg):
         """Update command to update an instance based on the class name \
-and id by adding or updating attribute"""
+and id by adding or updating attribute
+Usage: <class name>.update(<id>, <dictionary representation>)
+Usage: <class name>.update(<id>, <attribute name>, <attribute value>)
+Usage: update <class name> <id> <attribute name> <attribute value>
+"""
         list_args = parse(arg)
         if len(list_args) == 0:
             print("** class name missing **")
@@ -157,6 +170,8 @@ and id by adding or updating attribute"""
             instance.save()
 
     def default(self, arg):
+        """function that take the user input and process informations \
+Usage: <class name>.<function()>"""
         pattern_reg = r"(.*)\.(.*)\((.*?)\)$"
         if re.search(pattern_reg, str(arg)):
             str_arg = re.sub(pattern_reg, r"\2 \1 \3", arg)
@@ -168,20 +183,28 @@ and id by adding or updating attribute"""
                         arg_str = re.search(dict_reg, str_arg).group(
                             0).replace("'", '"')
                         arg_dict = json.loads(arg_str)
-                        for k, v in arg_dict.items():
-                            if type(v) is str:
-                                v = "\""+v+"\""
+                        for key, value in arg_dict.items():
+                            if type(value) is str:
+                                value = "\"" + value + "\""
                             self.do_update("{} {} {} {}".format(
-                                list_arg[1], list_arg[2].strip(','), k, v))
+                                list_arg[1],
+                                list_arg[2].strip(','),
+                                key,
+                                value
+                            ))
                     else:
-                        arg_l = []
+                        arg_list = []
                         for elt in list_arg:
                             element = elt.strip(',')
                             if type(element) is str:
-                                element = "\""+element+"\""
-                            arg_l.append(element)
+                                element = "\"" + element + "\""
+                            arg_list.append(element)
                         self.do_update("{} {} {} {}".format(
-                            arg_l[1], arg_l[2], arg_l[3], arg_l[4]))
+                            arg_list[1],
+                            arg_list[2],
+                            arg_list[3],
+                            arg_list[4]
+                        ))
                 else:
                     str_arg = str_arg.replace(",", " ")
                     arg = str_arg.split(" ", 1)
