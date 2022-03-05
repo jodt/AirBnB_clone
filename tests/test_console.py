@@ -565,6 +565,16 @@ of function \"{value2.__name__}\"")
             "Review",
             "State"
         ]
+
+        dict_int = {"attribute_name": 100}
+        dict_float = {"attribute_name": 100.001}
+        dict_str = {"attribute_name": "attribute name"}
+        dict_many = {
+            "attribute_name1": "attribute name",
+            "attribute_name2": 100,
+            "attribute_name3": 100.001
+        }
+
         for key_class in dict_class:
             with patch('sys.stdout', new=io.StringIO()) as f:
                 HBNBCommand().onecmd(f"create {key_class}")
@@ -580,6 +590,12 @@ of function \"{value2.__name__}\"")
 attribute_name, string_value)',
                 f'{key_class}.update("{existing_id}", \
 "attribute_name", "composed string value")',
+
+                f'{key_class}.update("{existing_id}", {dict_int})',
+                f'{key_class}.update("{existing_id}", {dict_str})',
+                f'{key_class}.update("{existing_id}", {dict_float})',
+                f'{key_class}.update("{existing_id}", {dict_many})',
+
                 f'update {key_class} "{existing_id}" \
 "attribute_name" "string_value"',
                 f'update {key_class} "{existing_id}" \
@@ -591,82 +607,85 @@ attribute_name, string_value)',
                 f'update {key_class} {existing_id} \
 attribute_name string_value'
             ]
-            dict_non_valid_test = [
-                f'update {key_class} "not_existing_id" \
-"attribute_name" "string_value"',
-                f'{key_class}.update("not_existing_id", \
-"attribute_name", "string_value")',
-            ]
+
             for key in dict_valid_test:
                 with patch('sys.stdout', new=io.StringIO()) as f:
                     HBNBCommand().onecmd(key)
                 output = f.getvalue()
                 self.assertFalse(output)
+
+            # ** no instance found **
+
+            dict_non_valid_test = [
+                f'update {key_class} "not_existing_id" \
+"attribute_name" "string_value"',
+                f'{key_class}.update("not_existing_id", \
+
+"attribute_name", "string_value")'
+            ]
             for key in dict_non_valid_test:
                 with patch('sys.stdout', new=io.StringIO()) as f:
                     HBNBCommand().onecmd(key)
                 output = f.getvalue()
                 self.assertEqual(output, "** no instance found **\n")
 
-    def test_update(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("update")
-        output = f.getvalue()
-        self.assertEqual(output, "** class name missing **\n")
+            # ** instance id missing **
+            dict_non_valid_test = [
+                f'update {key_class}',
+                f'{key_class}.update()'
+            ]
 
-    def test_update_with_false_class(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("update Model")
-        output = f.getvalue()
-        self.assertEqual(output, "** class doesn't exist **\n")
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
 
-    def test_update_without_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("update User")
-        output = f.getvalue()
-        self.assertEqual(output, "** instance id missing **\n")
+                self.assertEqual(output, "** instance id missing **\n")
 
-    def test_update_with_incorrect_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("update User 1212")
-        output = f.getvalue()
-        self.assertEqual(output, "** no instance found **\n")
+            # ** attribute name missing **
+            dict_non_valid_test = [
+                f'update {key_class} {existing_id}',
+                f'{key_class}.update({existing_id})'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** attribute name missing **\n")
 
-    def test_update_without_attribute(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("create User")
-            id = f.getvalue().strip()
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd(f"update User {id}")
-            output = f.getvalue()
-        self.assertEqual(output, "** attribute name missing **\n")
+            # ** value missing **
+            dict_non_valid_test = [
+                f'update {key_class} {existing_id} "attribute_name"',
+                f'{key_class}.update({existing_id}, "attribute_name")'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** value missing **\n")
 
-    def test_update_without_value(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("create User")
-            id = f.getvalue().strip()
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd(f"update User {id} 'first_name'")
-            output = f.getvalue()
-        self.assertEqual(output, "** value missing **\n")
+            # ** class doesn't exist **
+            dict_non_valid_test = [
+                f'update Hello {existing_id} "attribute_name"',
+                f'Hello.update({existing_id}, "attribute_name")'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class doesn't exist **\n")
 
-    def test_update_simple_attibute(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("create User")
-            id = f.getvalue().strip()
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd(f"update User {id} 'first_name' 'John'")
-            output = f.getvalue()
-        self.assertFalse(output)
+            # ** class name missing **
+            dict_non_valid_test = [
+                f'update',
+                f'.update()'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class name missing **\n")
 
-    def test_update_composed_attibute(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("create User")
-            id = f.getvalue().strip()
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd(f"update User {id} 'first_name' 'John John'")
-            output = f.getvalue()
-        self.assertFalse(output)
 
     # test help command
 
@@ -674,8 +693,7 @@ attribute_name string_value'
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help create")
         output = f.getvalue()
-        self.assertEqual(
-            output, "Create command to create an instance of a class\n")
+        self.assertTrue(output)
 
     def test_help_show(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
