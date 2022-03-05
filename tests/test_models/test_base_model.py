@@ -43,32 +43,40 @@ class TestBaseModel(unittest.TestCase):
 
         test_type_to_dict
     """
-    path = "models/base_model.py" # models/base_model.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/base_model.py"  # models/base_model.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(base_model.__doc__, "Missing: module documentation of file \"base.model\"")
+        self.assertIsNotNone(
+            base_model.__doc__,
+            "Missing: module documentation of file \"base.model\"")
 
         # classes documentation
         for key, value in base_model.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in base_model.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -141,7 +149,8 @@ updated_at has changed"""
         })
         self.assertEqual(my_model.id, "08400995-36d2-46a8-b932-364e7aef5eeb")
         self.assertEqual(my_model.name, "toto")
-        self.assertEqual(my_model.created_at, datetime(2022, 3, 1, 14, 12, 29, 585036))
+        self.assertEqual(my_model.created_at, datetime(
+            2022, 3, 1, 14, 12, 29, 585036))
         self.assertNotEqual(my_model.__class__, "BaseModel")
 
     def test_with_one_argument(self):
@@ -228,7 +237,12 @@ is a string object"""
             "my_number": 89,
             "__class__": "BaseModel"
         })
-        self.assertEqual((my_model.__str__()), "[BaseModel] (08400995-36d2-46a8-b932-364e7aef5eeb) {'id': '08400995-36d2-46a8-b932-364e7aef5eeb', 'created_at': datetime.datetime(2022, 3, 1, 14, 12, 29, 585036), 'updated_at': datetime.datetime(2022, 3, 1, 14, 12, 29, 585130), 'name': 'toto', 'my_number': 89}")
+        self.assertEqual((my_model.__str__(
+        )), "[BaseModel] (08400995-36d2-46a8-b932-364e7aef5eeb) \
+{'id': '08400995-36d2-46a8-b932-364e7aef5eeb', 'created_at': \
+datetime.datetime(2022, 3, 1, 14, 12, 29, 585036), 'updated_at': \
+datetime.datetime(2022, 3, 1, 14, 12, 29, 585130), 'name': \
+'toto', 'my_number': 89}")
 
 # =========================
 # test to_dict

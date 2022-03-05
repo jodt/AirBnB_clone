@@ -35,32 +35,41 @@ class TestFileStorage(unittest.TestCase):
         test_update_my_object_City
         test_create_from_dict_City
     """
-    path = "models/engine/file_storage.py" # models/FileStorage.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+
+    path = "models/engine/file_storage.py"  # models/FileStorage.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors,
+            0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(FileStorage.__doc__, "Missing: module documentation of file \"FileStorage.py\"")
+        self.assertIsNotNone(
+            FileStorage.__doc__,
+            "Missing: module documentation of file \"FileStorage.py\"")
 
         # classes documentation
         for key, value in FileStorage.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in FileStorage.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -100,7 +109,12 @@ class TestFileStorage(unittest.TestCase):
         models.storage._FileStorage__objects = {}
         self.assertFalse(models.storage.all())
         with open("file.json", "w") as f:
-            f.write(json.dumps({"BaseModel.70549f31-bff4-4a34-bd10-b8eaaeb3bb6b": {"id": "70549f31-bff4-4a34-bd10-b8eaaeb3bb6b", "created_at": "2022-03-01T20:27:24.506780", "updated_at": "2022-03-01T20:27:24.506790", "__class__": "BaseModel"}}))
+            f.write(json.dumps({
+                "BaseModel.70549f31-bff4-4a34-bd10-b8eaaeb3bb6b":
+                {"id": "70549f31-bff4-4a34-bd10-b8eaaeb3bb6b", "created_at":
+                 "2022-03-01T20:27:24.506780", "updated_at":
+                 "2022-03-01T20:27:24.506790", "__class__":
+                 "BaseModel"}}))
         models.storage.reload()
         self.assertTrue(models.storage.all())
 
@@ -116,4 +130,5 @@ class TestFileStorage(unittest.TestCase):
         models.storage.new(User())
         models.storage.save()
         models.storage.reload()
-        self.assertEqual(models.storage.all(), models.storage.__dict__['_FileStorage__objects'])
+        self.assertEqual(models.storage.all(), models.storage.__dict__[
+                         '_FileStorage__objects'])
