@@ -30,32 +30,39 @@ class TestCity(unittest.TestCase):
         test_update_my_object_City
         test_create_from_dict_City
     """
-    path = "models/city.py" # models/city.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/city.py"  # models/city.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(city.__doc__, "Missing: module documentation of file \"city.py\"")
+        self.assertIsNotNone(
+            city.__doc__, "Missing: module documentation of file \"city.py\"")
 
         # classes documentation
         for key, value in city.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in city.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -138,5 +145,6 @@ updated_at has changed"""
         })
         self.assertEqual(my_city.id, "4d8f60bd-ef9e-4186-9b7d-ef3bff6d6b9f")
         self.assertEqual(my_city.name, "City_name_example")
-        self.assertEqual(my_city.created_at, datetime(2022, 3, 2, 8, 30, 54, 356780))
+        self.assertEqual(my_city.created_at, datetime(
+            2022, 3, 2, 8, 30, 54, 356780))
         self.assertNotEqual(my_city.__class__, "City")

@@ -30,32 +30,40 @@ class TestReview(unittest.TestCase):
         test_update_my_object_Review
         test_create_from_dict_Review
     """
-    path = "models/review.py" # models/review.py
-    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    path = "models/review.py"  # models/review.py
+    file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+
     def test_conformance(self):
         """Test that we conform to PEP-8."""
         style = pycodestyle.StyleGuide(quiet=True)
         result = style.check_files([self.path])
         self.assertEqual(
-            result.total_errors, 0, f"Found code style errors (pycodestyle) in file \"{self.path}\""
+            result.total_errors, 0,
+            f"Found code style errors (pycodestyle) in file \"{self.path}\""
         )
 
     def test_documentation(self):
         """test all documentation of module"""
         # module documentation
-        self.assertIsNotNone(review.__doc__, "Missing: module documentation of file \"review.py\"")
+        self.assertIsNotNone(
+            review.__doc__,
+            "Missing: module documentation of file \"review.py\"")
 
         # classes documentation
         for key, value in review.__dict__.items():
             if callable(value):
-                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+                self.assertIsNotNone(
+                    value.__doc__, f"Missing: class documentation \
+of class \"{value.__name__}\"")
 
         # functions documentation
         for key, value in review.__dict__.items():
             if callable(value):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
-                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+                        self.assertIsNotNone(
+                            value2.__doc__, f"Missing: function documentation \
+of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -100,8 +108,8 @@ class TestReview(unittest.TestCase):
         self.assertTrue(hasattr(my_review, "text"))
 
     def test_create_instance_from_dict_Review(self):
-        """create a new instance Review using a dictionnary of another instance \
-already created"""
+        """create a new instance Review using a dictionnary \
+of another instance already created"""
         my_review = Review()
         my_review.place_id = "Review_place_id_example"
         my_review.user_id = "Review_user_id_example"
@@ -145,5 +153,6 @@ updated_at has changed"""
         })
         self.assertEqual(my_review.id, "b21883f7-f591-4eba-8ea4-db95d345db77")
         self.assertEqual(my_review.user_id, "4321")
-        self.assertEqual(my_review.created_at, datetime(2022, 3, 2, 12, 28, 19, 74340))
+        self.assertEqual(my_review.created_at, datetime(
+            2022, 3, 2, 12, 28, 19, 74340))
         self.assertNotEqual(my_review.__class__, "Review")
