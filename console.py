@@ -199,12 +199,10 @@ Usage: <class name>.<function()>"""
                             if type(element) is str:
                                 element = "\"" + element + "\""
                             arg_list.append(element)
-                        self.do_update("{} {} {} {}".format(
-                            arg_list[1],
-                            arg_list[2],
-                            arg_list[3],
-                            arg_list[4]
-                        ))
+                        sentence = ""
+                        for word in arg_list[1:]:
+                            sentence = sentence + " " + str(word)
+                        self.do_update(sentence)
                 else:
                     str_arg = str_arg.replace(",", " ")
                     arg = str_arg.split(" ", 1)
