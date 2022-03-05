@@ -6,11 +6,6 @@ Execute all tests: python3 -m unittest discover tests
 Execute this test: python3 -m unittest tests/test_console.py
 """
 
-from asyncio.constants import LOG_THRESHOLD_FOR_CONNLOST_WRITES
-from datetime import datetime
-import io
-import unittest
-from console import HBNBCommand
 from models.user import User
 from models.base_model import BaseModel
 from models.user import User
@@ -19,13 +14,15 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.engine.file_storage import FileStorage
-from unittest.mock import patch, Mock
-from contextlib import redirect_stdout
+from unittest.mock import patch
 from models import storage
+import io
+import unittest
+from console import HBNBCommand
+import console
+import pycodestyle
 import shutil
 import os
-from time import sleep
 
 
 class_dict = {
@@ -43,6 +40,32 @@ class TestConsole(unittest.TestCase):
     """
     class that test console
     """
+    path = "console.py" # models/state.py
+    file = os.path.splitext(path)[0].replace("/", ".") # file to test
+    def test_conformance(self):
+        """Test that we conform to PEP-8."""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files([self.path])
+        self.assertEqual(
+            result.total_errors, 0, f"Found code style errors (pycodestyle) in file test_console.py"
+        )
+
+    def test_documentation(self):
+        """test all documentation of module"""
+        # module documentation
+        self.assertIsNotNone(console.__doc__, "Missing: module documentation of file \"console.py\"")
+
+        # classes documentation
+        for key, value in console.__dict__.items():
+            if callable(value):
+                self.assertIsNotNone(value.__doc__, f"Missing: class documentation of class \"{value.__name__}\"")
+
+        # functions documentation
+        for key, value in console.__dict__.items():
+            if callable(value):
+                for key2, value2 in value.__dict__.items():
+                    if callable(value2):
+                        self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
 
     def setUp(self):
         try:
@@ -90,6 +113,13 @@ class TestConsole(unittest.TestCase):
             className = "BaseModel." + id
             self.assertIn(className, storage.all().keys())
 
+    def test_basemodel_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("BaseModel.create(etcetcetc)")
+            id = f.getvalue().strip()
+            className = "BaseModel." + id
+            self.assertIn(className, storage.all().keys())
+
     def test_create_user(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create User")
@@ -107,6 +137,13 @@ class TestConsole(unittest.TestCase):
     def test_user_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("User.create()")
+            id = f.getvalue().strip()
+            className = "User." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_user_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("User.create(etcetcetc)")
             id = f.getvalue().strip()
             className = "User." + id
             self.assertIn(className, storage.all().keys())
@@ -132,6 +169,13 @@ class TestConsole(unittest.TestCase):
             className = "State." + id
             self.assertIn(className, storage.all().keys())
 
+    def test_state_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("State.create(etcetcetc)")
+            id = f.getvalue().strip()
+            className = "State." + id
+            self.assertIn(className, storage.all().keys())
+
     def test_create_city(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create City")
@@ -149,6 +193,13 @@ class TestConsole(unittest.TestCase):
     def test_city_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("City.create()")
+            id = f.getvalue().strip()
+            className = "City." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_city_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("City.create(etcetcetc)")
             id = f.getvalue().strip()
             className = "City." + id
             self.assertIn(className, storage.all().keys())
@@ -174,6 +225,13 @@ class TestConsole(unittest.TestCase):
             className = "Amenity." + id
             self.assertIn(className, storage.all().keys())
 
+    def test_amenity_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Amenity.create(etcetcetc)")
+            id = f.getvalue().strip()
+            className = "Amenity." + id
+            self.assertIn(className, storage.all().keys())
+
     def test_create_place(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create Place")
@@ -191,6 +249,13 @@ class TestConsole(unittest.TestCase):
     def test_place_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("Place.create()")
+            id = f.getvalue().strip()
+            className = "Place." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_place_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Place.create(etcetcetc)")
             id = f.getvalue().strip()
             className = "Place." + id
             self.assertIn(className, storage.all().keys())
@@ -216,6 +281,20 @@ class TestConsole(unittest.TestCase):
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
 
+    def test_review_create_etc(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Review.create(etcetcetc)")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            self.assertIn(className, storage.all().keys())
+
+    def test_review_create_etc_space(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("Review   .create  (   etcetcetc  )")
+            id = f.getvalue().strip()
+            className = "Review." + id
+            self.assertIn(className, storage.all().keys())
+
     def test_create_without_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create")
@@ -227,6 +306,7 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("create Model")
         output = f.getvalue()
         self.assertEqual(output, "** class doesn't exist **\n")
+
     # test show method
 
     def test_show_basemodel(self):
@@ -491,6 +571,42 @@ class TestConsole(unittest.TestCase):
         output = f.getvalue()
         self.assertEqual(output, "** no instance found **\n")
 
+    def test_update_without_attribute(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd(f"update User {id}")
+            output = f.getvalue()
+        self.assertEqual(output, "** attribute name missing **\n")
+
+    def test_update_without_value(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd(f"update User {id} 'first_name'")
+            output = f.getvalue()
+        self.assertEqual(output, "** value missing **\n")
+
+    def test_update_simple_attibute(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd(f"update User {id} 'first_name' 'John'")
+            output = f.getvalue()
+        self.assertFalse(output)
+
+    def test_update_composed_attibute(self):
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            id = f.getvalue().strip()
+        with patch('sys.stdout', new=io.StringIO()) as f:
+            HBNBCommand().onecmd(f"update User {id} 'first_name' 'John John'")
+            output = f.getvalue()
+        self.assertFalse(output)
+
     # test help command
 
     def test_help_create(self):
@@ -504,38 +620,31 @@ class TestConsole(unittest.TestCase):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help show")
         output = f.getvalue()
-        self.assertEqual(
-            output, "Show command to print the string representation \
-of an instance based on the class name and id\n")
+        self.assertTrue(output)
 
     def test_help_destroy(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help destroy")
         output = f.getvalue()
-        self.assertEqual(
-            output, "Destroy command to delete an instance \
-based on the class name and id\n")
+        self.assertTrue(output)
 
     def test_help_all(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help all")
         output = f.getvalue()
-        self.assertEqual(output, "All command to print all string \
-representation of all instances\n")
+        self.assertTrue(output)
 
     def test_help_count(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help count")
         output = f.getvalue()
-        self.assertEqual(output, "Count command to retrieve \
-the number of instances of a class\n")
+        self.assertTrue(output)
 
     def test_help_update(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("help update")
         output = f.getvalue()
-        self.assertEqual(output, "Update command to update an \
-instance based on the class name and id by adding or updating attribute\n")
+        self.assertTrue(output)
 
  # test destroy method
 

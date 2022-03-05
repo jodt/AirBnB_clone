@@ -5,6 +5,7 @@ Execute all tests: python3 -m unittest discover tests
 Execute this test: python3 -m unittest tests/test_models/test_place.py
 """
 
+import shutil
 from models import place
 from models.place import Place
 import unittest
@@ -12,6 +13,7 @@ import pycodestyle
 import os
 from time import sleep
 from datetime import datetime
+from models import storage
 
 
 class TestPlace(unittest.TestCase):
@@ -54,6 +56,23 @@ class TestPlace(unittest.TestCase):
                 for key2, value2 in value.__dict__.items():
                     if callable(value2):
                         self.assertIsNotNone(value2.__doc__, f"Missing: function documentation of function \"{value2.__name__}\"")
+
+    def setUp(self):
+        try:
+            shutil.copyfile("file.json", "tmp_file.json")
+            os.remove("file.json")
+            open("file.json", "w").close()
+            storage._FileStorage__objects = {}
+        except Exception:
+            pass
+
+    def tearDown(self):
+        try:
+            shutil.copyfile("tmp_file.json", "file.json")
+            os.remove("tmp_file.json")
+            storage._FileStorage__objects = {}
+        except Exception:
+            pass
 
 # =========================
 # test __init__
