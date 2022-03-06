@@ -6,6 +6,8 @@ Execute all tests: python3 -m unittest discover tests
 Execute this test: python3 -m unittest tests/test_console.py
 """
 
+from attr import attributes, has
+from models import state
 from models.user import User
 from models.base_model import BaseModel
 from models.user import User
@@ -748,6 +750,45 @@ of function \"{value2.__name__}\"")
     # test update method
 
     def test_all_update_BaseModel(self):
+        dict_class = [
+            "BaseModel",
+            "User",
+            "Amenity",
+            "City",
+            "Place",
+            "Review",
+            "State"
+        ]
+
+        list_attributes_str = [
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "name",
+            "text",
+            "place_id",
+            "state_id",
+            "city_id",
+            "user_id",
+            "description",
+        ]
+
+        list_attributes_int = [
+            "number_rooms",
+            "number_bathrooms",
+            "max_guest",
+            "price_by_night",
+        ]
+
+        list_attributes_float = [
+            "latitude",
+            "longitude",
+        ]
+        list_attributes_list = [
+            "amenity_ids"
+        ]
+
         dict_int = {"attribute_name": 100}
         dict_float = {"attribute_name": 100.001}
         dict_str = {"attribute_name": "attribute name"}
@@ -872,6 +913,76 @@ attribute_name string_value'
                     HBNBCommand().onecmd(key)
                 output = f.getvalue()
                 self.assertEqual(output, "** class name missing **\n")
+
+            # test updated attribue
+            for key_class in dict_class:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(f"create {key_class}")
+                id = f.getvalue().replace("\n", "")
+                key_instance = f"{key_class}.{id}"
+                instance = storage.all()[key_instance]
+                updated_at_value = instance.updated_at
+                for attribute in list_attributes_str:
+                    if (hasattr(instance, attribute)):
+                        if getattr(instance, attribute) == "":
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} \
+{attribute} updated_name")
+                            self.assertTrue(getattr(instance, attribute) != "")
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == str)
+                            self.assertEqual(
+                                getattr(instance, attribute), "updated_name")
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
+                        else:
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} \
+{attribute} updated_name")
+                            self.assertEqual(
+                                getattr(instance, attribute), "updated_name")
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == str)
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
+                for attribute in list_attributes_int:
+                    if (hasattr(instance, attribute)):
+                        if getattr(instance, attribute) == "":
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} {attribute} 89")
+                            self.assertTrue(getattr(instance, attribute) != "")
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == int)
+                            self.assertEqual(getattr(instance, attribute), 89)
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
+                        else:
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} {attribute} 89")
+                            self.assertEqual(getattr(instance, attribute), 89)
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == int)
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
+                for attribute in list_attributes_float:
+                    if (hasattr(instance, attribute)):
+                        if getattr(instance, attribute) == "":
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} {attribute} 3.5")
+                            self.assertTrue(getattr(instance, attribute) != "")
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == float)
+                            self.assertEqual(getattr(instance, attribute), 3.5)
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
+                        else:
+                            HBNBCommand().onecmd(
+                                f"update {key_class} {id} {attribute} 3.5")
+                            self.assertEqual(getattr(instance, attribute), 3.5)
+                            self.assertTrue(
+                                type(getattr(instance, attribute)) == float)
+                            self.assertNotEqual(
+                                updated_at_value, instance.updated_at)
 
     # test help command
     def test_help_create(self):
