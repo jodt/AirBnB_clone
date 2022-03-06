@@ -172,7 +172,7 @@ Usage: update <class name> <id> <attribute name> <attribute value>
     def default(self, arg):
         """function that take the user input and process informations \
 Usage: <class name>.<function()>"""
-        pattern_reg = r"(.*)\.(.*)\((.*?)\)$"
+        pattern_reg = r"(.*)\.(.*)\((.*?)\)"
         if re.search(pattern_reg, str(arg)):
             str_arg = re.sub(pattern_reg, r"\2 \1 \3", arg)
             list_arg = parse(str_arg)
