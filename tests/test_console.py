@@ -25,23 +25,29 @@ import shutil
 import os
 
 
-class_dict = {
-    "BaseModel": BaseModel,
-    "User": User,
-    "State": State,
-    "City": City,
-    "Amenity": Amenity,
-    "Place": Place,
-    "Review": Review
-}
-
-
 class TestConsole(unittest.TestCase):
     """
     class that test console
     """
     path = "console.py"  # models/state.py
     file = os.path.splitext(path)[0].replace("/", ".")  # file to test
+    list_function = [
+        "create",
+        "show",
+        "destroy",
+        "all",
+        "count",
+        "update",
+    ]
+    list_class = [
+        "BaseModel",
+        "User",
+        "Amenity",
+        "City",
+        "Place",
+        "Review",
+        "State"
+    ]
 
     def test_conformance(self):
         """Test that we conform to PEP-8."""
@@ -433,6 +439,76 @@ of function \"{value2.__name__}\"")
 
     # test show method
 
+    def test_all_show_BaseModel(self):
+        for key_class in self.list_class:
+            for key in range(7):
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(f"create {key_class}")
+                existing_id = f.getvalue().replace("\n", "")
+                dict_valid_test = [
+                    f'{key_class}.show("{existing_id}")',
+                    f'{key_class}.show("{existing_id}" etcetc)',
+                    f'{key_class}.show("{existing_id}" etcetc) etcetc',
+                    f'{key_class}.show({existing_id} etcetc) etcetc',
+                    f'show {key_class} "{existing_id}"',
+                    f'show {key_class} "{existing_id}" etcetc',
+                    f'show {key_class} {existing_id} etcetc',
+                ]
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(dict_valid_test[key])
+                output = f.getvalue()
+                self.assertTrue(output)
+                self.assertEqual(
+                    output.replace("\n", ""),
+                    storage._FileStorage__objects[
+                        f'{key_class}.{existing_id}'
+                    ].__str__()
+                )
+
+            # ** no instance found **
+            dict_non_valid_test = [
+                f'show {key_class} "not_existing_id"',
+                f'{key_class}.show("not_existing_id")'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** no instance found **\n")
+
+            # ** instance id missing **
+            dict_non_valid_test = [
+                f'show {key_class}',
+                f'{key_class}.show()'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** instance id missing **\n")
+
+            # ** class doesn't exist **
+            dict_non_valid_test = [
+                f'show Hello {existing_id}',
+                f'Hello.show({existing_id})'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class doesn't exist **\n")
+
+            # ** class name missing **
+            dict_non_valid_test = [
+                f'show',
+                f'.show()'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class name missing **\n")
+
     def test_show_basemodel(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
             HBNBCommand().onecmd("create BaseModel")
@@ -672,15 +748,6 @@ of function \"{value2.__name__}\"")
     # test update method
 
     def test_all_update_BaseModel(self):
-        dict_class = [
-            "BaseModel",
-            "User",
-            "Amenity",
-            "City",
-            "Place",
-            "Review",
-            "State"
-        ]
         dict_int = {"attribute_name": 100}
         dict_float = {"attribute_name": 100.001}
         dict_str = {"attribute_name": "attribute name"}
@@ -689,7 +756,7 @@ of function \"{value2.__name__}\"")
             "attribute_name2": 100,
             "attribute_name3": 100.001
         }
-        for key_class in dict_class:
+        for key_class in self.list_class:
             with patch('sys.stdout', new=io.StringIO()) as f:
                 HBNBCommand().onecmd(f"create {key_class}")
             existing_id = f.getvalue().replace("\n", "")
@@ -704,14 +771,21 @@ of function \"{value2.__name__}\"")
 attribute_name, string_value)',
                 f'{key_class}.update("{existing_id}", \
 "attribute_name", "composed string value")',
+                f'{key_class}.update("{existing_id}", \
+"attribute_name", "composed string value") etcetcetc',
+                f'{key_class}.update("{existing_id}", \
+"attribute_name", "composed string value")',
                 f'{key_class}.update("{existing_id}", {dict_int})',
                 f'{key_class}.update("{existing_id}", {dict_str})',
                 f'{key_class}.update("{existing_id}", {dict_float})',
                 f'{key_class}.update("{existing_id}", {dict_many})',
+                f'{key_class}.update("{existing_id}", {dict_many}) etcetcetc',
                 f'update {key_class} "{existing_id}" \
 "attribute_name" "string_value"',
                 f'update {key_class} "{existing_id}" \
-"attribute_name" "composed string value"',
+"attribute_name" "string_value"',
+                f'update {key_class} "{existing_id}" \
+"attribute_name" "composed string value" etcetcetc',
                 f'update {key_class} "{existing_id}" \
 "attribute_name" "100"',
                 f'update {key_class} "{existing_id}" \
@@ -724,6 +798,12 @@ attribute_name string_value'
                     HBNBCommand().onecmd(key)
                 output = f.getvalue()
                 self.assertFalse(output)
+                self.assertEqual(
+                    existing_id,
+                    storage._FileStorage__objects[
+                        f"{key_class}.{existing_id}"
+                    ].id
+                )
 
             # ** no instance found **
             dict_non_valid_test = [
@@ -794,73 +874,76 @@ attribute_name string_value'
                 self.assertEqual(output, "** class name missing **\n")
 
     # test help command
-
     def test_help_create(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help create")
-        output = f.getvalue()
-        self.assertTrue(output)
-
-    def test_help_show(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help show")
-        output = f.getvalue()
-        self.assertTrue(output)
-
-    def test_help_destroy(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help destroy")
-        output = f.getvalue()
-        self.assertTrue(output)
-
-    def test_help_all(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help all")
-        output = f.getvalue()
-        self.assertTrue(output)
-
-    def test_help_count(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help count")
-        output = f.getvalue()
-        self.assertTrue(output)
-
-    def test_help_update(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("help update")
-        output = f.getvalue()
-        self.assertTrue(output)
+        for key_class in self.list_function:
+            with patch('sys.stdout', new=io.StringIO()) as f:
+                HBNBCommand().onecmd(f"help {key_class}")
+            output = f.getvalue()
+            self.assertTrue(output)
 
     # test destroy method
 
-    def test_destroy(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy")
-        output = f.getvalue()
-        self.assertEqual(output, "** class name missing **\n")
+    def test_all_destroy_BaseModel(self):
+        for key_class in self.list_class:
+            for key in range(7):
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(f"create {key_class}")
+                existing_id = f.getvalue().replace("\n", "")
+                dict_valid_test = [
+                    f'{key_class}.destroy("{existing_id}")',
+                    f'{key_class}.destroy("{existing_id}" etcetc)',
+                    f'{key_class}.destroy("{existing_id}" etcetc) etcetc',
+                    f'{key_class}.destroy({existing_id} etcetc) etcetc',
+                    f'destroy {key_class} "{existing_id}"',
+                    f'destroy {key_class} "{existing_id}" etcetc',
+                    f'destroy {key_class} {existing_id} etcetc',
+                ]
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(dict_valid_test[key])
+                output = f.getvalue()
+                self.assertFalse(output)
+                self.assertNotIn(existing_id, storage._FileStorage__objects)
 
-    def test_destroy_with_false_class(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy Model")
-        output = f.getvalue()
-        self.assertEqual(output, "** class doesn't exist **\n")
+            # ** no instance found **
+            dict_non_valid_test = [
+                f'destroy {key_class} "not_existing_id"',
+                f'{key_class}.destroy("not_existing_id")'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** no instance found **\n")
 
-    def test_destroy_without_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy User")
-        output = f.getvalue()
-        self.assertEqual(output, "** instance id missing **\n")
+            # ** instance id missing **
+            dict_non_valid_test = [
+                f'destroy {key_class}',
+                f'{key_class}.destroy()'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** instance id missing **\n")
 
-    def test_destroy_with_incorrect_id(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("destroy User 1212")
-        output = f.getvalue()
-        self.assertEqual(output, "** no instance found **\n")
+            # ** class doesn't exist **
+            dict_non_valid_test = [
+                f'destroy Hello {existing_id}',
+                f'Hello.destroy({existing_id})'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class doesn't exist **\n")
 
-    def test_destroy_user_instance(self):
-        with patch('sys.stdout', new=io.StringIO()) as f:
-            HBNBCommand().onecmd("create User")
-        key = "User"+"."+f.getvalue().strip('\n')
-        self.assertIn(key, storage._FileStorage__objects)
-        HBNBCommand().onecmd("destroy User {}".format(f.getvalue()))
-        self.assertNotIn(key, storage._FileStorage__objects)
+            # ** class name missing **
+            dict_non_valid_test = [
+                f'destroy',
+                f'.destroy()'
+            ]
+            for key in dict_non_valid_test:
+                with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(key)
+                output = f.getvalue()
+                self.assertEqual(output, "** class name missing **\n")
