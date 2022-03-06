@@ -106,6 +106,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "BaseModel." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), BaseModel)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_basemodel_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -113,6 +117,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "BaseModel." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), BaseModel)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_basemodel_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -120,6 +128,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "BaseModel." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), BaseModel)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_basemodel_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -127,6 +139,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "BaseModel." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), BaseModel)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_user(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -134,6 +150,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "User." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), User)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_user_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -141,6 +161,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "User." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), User)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_user_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -148,6 +172,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "User." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), User)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_user_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -155,6 +183,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "User." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), User)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_state(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -162,6 +194,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "State." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), State)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_state_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -169,6 +205,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "State." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), State)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_state_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -176,6 +216,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "State." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), State)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_state_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -183,6 +227,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "State." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), State)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_city(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -190,6 +238,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "City." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), City)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_city_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -197,6 +249,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "City." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), City)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_city_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -204,6 +260,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "City." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), City)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_city_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -211,6 +271,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "City." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), City)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_amenity(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -218,6 +282,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Amenity." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Amenity)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_amenity_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -225,6 +293,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Amenity." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Amenity)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_amenity_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -232,6 +304,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Amenity." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Amenity)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_amenity_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -239,6 +315,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Amenity." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Amenity)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_place(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -246,6 +326,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Place." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Place)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_place_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -253,6 +337,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Place." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Place)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_place_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -260,6 +348,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Place." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Place)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_place_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -267,6 +359,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Place." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Place)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_review(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -274,6 +370,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Review)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_review_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -281,6 +381,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Review)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_review_create(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -288,6 +392,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Review)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_review_create_etc(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -295,6 +403,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Review)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_review_create_etc_space(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
@@ -302,6 +414,10 @@ of function \"{value2.__name__}\"")
             id = f.getvalue().strip()
             className = "Review." + id
             self.assertIn(className, storage.all().keys())
+            self.assertEqual(
+                type(storage._FileStorage__objects[className]), Review)
+            self.assertIsInstance(
+                storage._FileStorage__objects[className], BaseModel)
 
     def test_create_without_class(self):
         with patch('sys.stdout', new=io.StringIO()) as f:
