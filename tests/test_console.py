@@ -23,6 +23,7 @@ import console
 import pycodestyle
 import shutil
 import os
+import ast
 
 
 class TestConsole(unittest.TestCase):
@@ -1056,3 +1057,14 @@ attribute_name string_value'
                     HBNBCommand().onecmd(key)
                 output = f.getvalue()
                 self.assertEqual(output, "** class name missing **\n")
+
+# test count command
+
+    def test_count_function(self):
+        for key_class in self.list_class:
+            with patch('sys.stdout', new=io.StringIO()) as f:
+                    HBNBCommand().onecmd(f"{key_class}.count()")
+            output = f.getvalue().replace("\n", "")
+            self.assertTrue(output)
+            self.assertIsInstance(int(output), int)
+            self.assertGreaterEqual(int(output), 0)
