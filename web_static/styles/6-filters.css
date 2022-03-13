@@ -44,7 +44,7 @@ button:hover{
 
 .popover {
     position: relative;
-    left: -30px;
+    left: -31px;
     margin-top: 0;
     display: none;
     z-index: 1;
@@ -88,4 +88,5 @@ h4 {
     font-weight: 400;
     font-size: 14px;
     margin-top: 0;
+    margin-bottom: 18px;
 }
