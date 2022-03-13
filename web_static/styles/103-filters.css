@@ -45,7 +45,7 @@ button:hover{
     position: relative;
     left: -31px;
     margin-top: 0;
-    display: inline-block;
+    display: none;
     z-index: 1;
     width: 100%;
     background-color: #FAFAFA;
